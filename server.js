@@ -1,5 +1,7 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+//files
+const config = require("./config");
+//const bodyParser = require("body-parser");
 const app = express();
 var exphbs = require("express-handlebars");
 const mongoose = require("mongoose");
@@ -16,20 +18,20 @@ const port = process.env.PORT || 3000;
 
 // for parsing json
 app.use(
-  bodyParser.json({
+  express.json({
     limit: "20mb",
   })
 );
 // parse application/x-www-form-urlencoded
 app.use(
-  bodyParser.urlencoded({
+  express.urlencoded({
     extended: false,
     limit: "20mb",
   })
 );
 
 mongoose.connect(
-  "mongodb+srv://viktorjjf:dialogflow123@dialogflowcluster.ouviu.mongodb.net/chatbotDB?retryWrites=true&w=majority",
+  `mongodb+srv://:<password>@dialogflowcluster.crwqv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
