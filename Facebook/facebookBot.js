@@ -174,107 +174,107 @@ async function handleDialogFlowAction(
   parameters
 ) {
   switch (action) {
-    case "Helados.info.action":
-      let icecreamName = parameters.fields.icecreamName.stringValue;
-      let icecreamInfo = await Product.findOne({ name: icecreamName });
-      sendGenericMessage(sender, [
-        {
-          title: icecreamInfo.name + " $" + icecreamInfo.price,
-          image_url: icecreamInfo.img,
-          subtitle: icecreamInfo.description,
-          buttons: [
+    /*     case "Helados.info.action":
+          let icecreamName = parameters.fields.icecreamName.stringValue;
+          let icecreamInfo = await Product.findOne({ name: icecreamName });
+          sendGenericMessage(sender, [
             {
-              type: "postback",
-              title: "Hacer compra",
-              payload: "hacer_compra",
+              title: icecreamInfo.name + " $" + icecreamInfo.price,
+              image_url: icecreamInfo.img,
+              subtitle: icecreamInfo.description,
+              buttons: [
+                {
+                  type: "postback",
+                  title: "Hacer compra",
+                  payload: "hacer_compra",
+                },
+                {
+                  type: "postback",
+                  title: "Ver más helados",
+                  payload: "ver_mas_helados",
+                },
+              ],
+            },
+          ]);
+          break;
+        case "Code.DemasElementos.action":
+          await sendTextMessage(sender, "Estoy mandando una imagen y un boton");
+          await sendImageMessage(
+            sender,
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQeOnyjNIucV-XNe6DcdOuhKahh9jdNY4RkuQ&usqp=CAU"
+          );
+          await sendButtonMessage(sender, "Ejemplo de boton", [
+            {
+              type: "web_url",
+              url: "https://www.messenger.com",
+              title: "Visit Messenger",
+            },
+          ]);
+          break;
+        case "Code.menuCarrusel.action":
+          let helados = [
+            {
+              id: 1,
+              nombre: "Helado de fresa",
+              img:
+                "https://cocina-casera.com/wp-content/uploads/2018/05/helado-de-fresa-casero.jpg",
+              descripcion: "Los helados de fresa son muy ricos",
+              precio: 7,
             },
             {
-              type: "postback",
-              title: "Ver más helados",
-              payload: "ver_mas_helados",
-            },
-          ],
-        },
-      ]);
-      break;
-    case "Code.DemasElementos.action":
-      await sendTextMessage(sender, "Estoy mandando una imagen y un boton");
-      await sendImageMessage(
-        sender,
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQeOnyjNIucV-XNe6DcdOuhKahh9jdNY4RkuQ&usqp=CAU"
-      );
-      await sendButtonMessage(sender, "Ejemplo de boton", [
-        {
-          type: "web_url",
-          url: "https://www.messenger.com",
-          title: "Visit Messenger",
-        },
-      ]);
-      break;
-    case "Code.menuCarrusel.action":
-      let helados = [
-        {
-          id: 1,
-          nombre: "Helado de fresa",
-          img:
-            "https://cocina-casera.com/wp-content/uploads/2018/05/helado-de-fresa-casero.jpg",
-          descripcion: "Los helados de fresa son muy ricos",
-          precio: 7,
-        },
-        {
-          id: 2,
-          nombre: "Helado de piña",
-          img:
-            "https://okdiario.com/img/2019/07/07/receta-de-helado-casero-de-pina-1-655x368.jpg",
-          descripcion: "Los helados de piña son muy ricos",
-          precio: 5,
-        },
-        {
-          id: 3,
-          nombre: "Helado de chocolate",
-          img:
-            "https://placeralplato.com/files/2015/08/helado-de-chocolate.jpg",
-          descripcion: "Los helados de chocolate son muy ricos",
-          precio: 10,
-        },
-      ];
-      let tarjetas = [];
-      helados.forEach((helado) => {
-        tarjetas.push({
-          title: helado.nombre + " $" + helado.precio,
-          image_url: helado.img,
-          subtitle: helado.descripcion,
-          buttons: [
-            {
-              type: "postback",
-              title: "Hacer compra",
-              payload: "hacer_compra",
+              id: 2,
+              nombre: "Helado de piña",
+              img:
+                "https://okdiario.com/img/2019/07/07/receta-de-helado-casero-de-pina-1-655x368.jpg",
+              descripcion: "Los helados de piña son muy ricos",
+              precio: 5,
             },
             {
-              type: "postback",
-              title: "Ver más helados",
-              payload: "ver_mas_helados",
+              id: 3,
+              nombre: "Helado de chocolate",
+              img:
+                "https://placeralplato.com/files/2015/08/helado-de-chocolate.jpg",
+              descripcion: "Los helados de chocolate son muy ricos",
+              precio: 10,
             },
-          ],
-        });
-      });
-      sendGenericMessage(sender, tarjetas);
-
-      break;
-    case "Codigo.quickReply.action":
-      let replies = [];
-      for (let i = 1; i <= 5; i++) {
-        replies.push({
-          image_url:
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Check_green_icon.svg/1200px-Check_green_icon.svg.png",
-          title: i,
-          payload: "si_acepto",
-          content_type: "text",
-        });
-      }
-      sendQuickReply(sender, "Ejemplo de quick reply", replies);
-      break;
-    case "Ubicacion.action":
+          ];
+          let tarjetas = [];
+          helados.forEach((helado) => {
+            tarjetas.push({
+              title: helado.nombre + " $" + helado.precio,
+              image_url: helado.img,
+              subtitle: helado.descripcion,
+              buttons: [
+                {
+                  type: "postback",
+                  title: "Hacer compra",
+                  payload: "hacer_compra",
+                },
+                {
+                  type: "postback",
+                  title: "Ver más helados",
+                  payload: "ver_mas_helados",
+                },
+              ],
+            });
+          });
+          sendGenericMessage(sender, tarjetas);
+    
+          break;
+        case "Codigo.quickReply.action":
+          let replies = [];
+          for (let i = 1; i <= 5; i++) {
+            replies.push({
+              image_url:
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Check_green_icon.svg/1200px-Check_green_icon.svg.png",
+              title: i,
+              payload: "si_acepto",
+              content_type: "text",
+            });
+          }
+          sendQuickReply(sender, "Ejemplo de quick reply", replies);
+          break; */
+    case "prueba":
       sendTextMessage(sender, "este es un mensaje enviado desde el código");
       handleMessages(messages, sender);
       break;
