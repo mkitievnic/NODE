@@ -278,6 +278,10 @@ async function handleDialogFlowAction(
       sendTextMessage(sender, "este es un mensaje enviado desde el código");
       handleMessages(messages, sender);
       break;
+    case "input.welcome":
+      /* sendTextMessage(sender, "este es un mensaje enviado desde el código");
+      handleMessages(messages, sender); */
+      break;
     default:
       //unhandled action, just send back the text
       handleMessages(messages, sender);
