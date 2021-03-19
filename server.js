@@ -1,10 +1,11 @@
 const express = require("express");
 //files
-const config = require("./config");
+const { PASWORD, NAMEMONGODB } = require("./config");
 //const bodyParser = require("body-parser");
 const app = express();
 var exphbs = require("express-handlebars");
 const mongoose = require("mongoose");
+
 
 app.engine(
   ".hbs",
@@ -31,7 +32,7 @@ app.use(
 );
 
 mongoose.connect(
-  `mongodb+srv://:<password>@dialogflowcluster.crwqv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+  `mongodb+srv://mkitievnic:${PASWORD}@dialogflowcluster.crwqv.mongodb.net/${NAMEMONGODB}?retryWrites=true&w=majority`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
