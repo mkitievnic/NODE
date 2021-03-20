@@ -286,12 +286,12 @@ async function handleDialogFlowAction(
           "content_type": "text",
           "title": "Informes Capacitación",
           "payload": "INFORMES_PAYLOAD",
-          "image_url": "https://img.icons8.com/nolan/72/medical-history.png"
+          "image_url": "https://img.icons8.com/nolan/72/medical-history.png",
         }, {
           "content_type": "text",
           "title": "Preguntas Frecuentes (F.A.Q.)",
           "payload": "FAQ_PAYLOAD",
-          "image_url": "https://img.icons8.com/nolan/2x/questions.png"
+          "image_url": "https://img.icons8.com/nolan/2x/questions.png",
         }
       ]);
       /* handleMessages(messages, sender); */

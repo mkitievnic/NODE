@@ -1,0 +1,88 @@
+ //CARRUSEL DE REPORTES
+ 
+ sendGenericMessage(sender, [
+        {
+          "buttons": [
+            {
+              "title": "Generar",
+              "payload": "CURSOS PROXIMOS A VENCERSE",
+              "type": "postback"
+            }
+          ],
+          "title": "CURSOS PROXIMOS A VENCERSE",
+          "image_url": "https://economipedia.com/wp-content/uploads/Fecha-de-vencimiento-1.png",
+          "subtitle": "Cursos proximos a vencerse."
+        },
+        {
+          "subtitle": "Cumplimiento de matriz de capacitación",
+          "title": "CUMPLIMIENTO DE MATRIZ",
+          "buttons": [
+            {
+              "payload": "MATRIZ_DE_CAPACITACION",
+              "type": "postback",
+              "title": "Generar"
+            }
+          ],
+          "image_url": "https://image.freepik.com/vector-gratis/concepto-examen-linea-pruebas-linea-formulario-cuestionario-educacion-linea-encuesta-cuestionario-internet-ilustracion-vectorial-isometrica_159446-22.jpg"
+        },
+        {
+          "subtitle": "Habilitacion de Manejo Defensivo Inteligente",
+          "image_url": "https://image.freepik.com/vector-gratis/curso-conduccion-isometrica_30590-103.jpg",
+          "title": "CERTIFICACION DE CONDUCCION",
+          "buttons": [
+            {
+              "title": "Generar",
+              "payload": "CONDUCTO_HABILITADO",
+              "type": "postback"
+            }
+          ]
+        },
+        {
+          "buttons": [
+            {
+              "payload": "WELL CONTROL SCHOOL",
+              "title": "Generar",
+              "type": "postback"
+            }
+          ],
+          "title": "WELL CONTROL SCHOOL",
+          "subtitle": "Certificacion de Control de Pozos.",
+          "image_url": "https://www.drillingcontractor.org/wp-content/uploads/2017/03/well-control-school-thumbnail.png"
+        },
+        {
+          "image_url": "https://www.acceseo.com/wp-content/uploads/2019/09/como-organizar-un-evento.png",
+          "buttons": [
+            {
+              "type": "postback",
+              "payload": "INFORMACION DEL EVENTO",
+              "title": "Generar"
+            }
+          ],
+          "title": "INFORMACION DE UN EVENTO",
+          "subtitle": "Información del evento a asistir."
+        },
+        {
+          "image_url": "https://image.freepik.com/vector-gratis/concepto-cursos-linea_23-2148533386.jpg",
+          "buttons": [
+            {
+              "type": "postback",
+              "title": "Generar",
+              "payload": "HISTORICO DE CAPACITACION"
+            }
+          ],
+          "title": "HISTORICO DE CAPACITACION",
+          "subtitle": "Todos los cursos realizados a la fecha."
+        },
+        {
+          "title": "CRONOGRAMA DE CAPACITACIÓN",
+          "image_url": "https://luna1.co/9229bd.png",
+          "buttons": [
+            {
+              "payload": "CRONOGRAMA DE CAPACITACION",
+              "title": "Generar",
+              "type": "postback"
+            }
+          ],
+          "subtitle": "Eventos(cursos), realizados o programados."
+        }
+      ]);
