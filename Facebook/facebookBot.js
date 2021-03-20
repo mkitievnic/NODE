@@ -285,7 +285,7 @@ async function handleDialogFlowAction(
         {
           "content_type": "text",
           "title": "Informes Capacitación",
-          "payload": "INFORMES",
+          "payload": "como estas",
           "image_url": "https://img.icons8.com/nolan/72/medical-history.png"
         }, {
           "content_type": "text",
