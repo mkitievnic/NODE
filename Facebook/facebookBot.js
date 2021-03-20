@@ -8,6 +8,7 @@ const axios = require("axios");
 const config = require("../config");
 const dialogflow = require("../dialogflow");
 const { structProtoToJson } = require("./helpers/structFunctions");
+const { requestURL, queryAPI } = require('../LibDialogFlow');
 //mongodb models
 const ChatbotUser = require("../Models/ChatbotUsers");
 const Product = require("../Models/Products");
@@ -383,6 +384,27 @@ async function handleDialogFlowAction(
           "subtitle": "Eventos(cursos), realizados o programados."
         }
       ]);
+      break;
+    case "CumplimientoMatriz":
+      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      break;
+    case "wellControlHabilitados":
+      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      break;
+    case "cursosProximosAVencerse":
+      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      break;
+    case "wellControlHabilitados":
+      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      break;
+    case "conductoresHabilitadosDeshabilitados":
+      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      break;
+    case "cronogramaCapacitacion":
+      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      break;
+    case "historicoCapacitacion":
+      sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
     default:
       //unhandled action, just send back the text
