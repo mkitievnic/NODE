@@ -294,7 +294,7 @@ async function handleDialogFlowAction(
           "image_url": "https://img.icons8.com/nolan/2x/questions.png"
         }
       ]);
-      handleMessages(messages, sender);
+      /* handleMessages(messages, sender); */
       break;
     default:
       //unhandled action, just send back the text
