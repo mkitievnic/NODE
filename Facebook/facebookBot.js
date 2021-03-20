@@ -280,7 +280,7 @@ async function handleDialogFlowAction(
       break;
     case "input.welcome":
       /* sendTextMessage(sender, "este es un mensaje enviado desde el código"); */
-      handleMessages(messages, sender);
+
       sendQuickReply(sender, "Que funcionalidad deseas realizar?", [
         {
           "content_type": "text",
@@ -294,7 +294,7 @@ async function handleDialogFlowAction(
           "image_url": "https://img.icons8.com/nolan/2x/questions.png"
         }
       ]);
-
+      handleMessages(messages, sender);
       break;
     default:
       //unhandled action, just send back the text
