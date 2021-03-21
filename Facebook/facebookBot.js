@@ -8,7 +8,7 @@ const axios = require("axios");
 const config = require("../config");
 const dialogflow = require("../dialogflow");
 const { structProtoToJson } = require("./helpers/structFunctions");
-const { requestURL, queryAPI } = require('../LibDialogFlow');
+const { requestURL, queryAPI, eliminarItalicas } = require('../LibDialogFlow');
 //mongodb models
 const ChatbotUser = require("../Models/ChatbotUsers");
 const Product = require("../Models/Products");
@@ -125,9 +125,15 @@ async function receivedMessage(event) {
 }
 
 async function saveUserData(facebookId) {
-  let isRegistered = await findOne({ facebookId });
-  if (isRegistered) return;
+  console.log('Facebook Id:', facebookId);
+
+  //console.log(findOne);
+  let faceUser = await ChatbotUser.findOne({ facebookId });
+  /* console.log(faceUser); */
+  if (faceUser) return console.log('El usuario ya existe', faceUser);
+  //if (isRegistered) return;
   let userData = await getUserData(facebookId);
+  console.log(userData);
   let chatbotUser = new ChatbotUser({
     firstName: userData.first_name,
     lastName: userData.last_name,
@@ -282,7 +288,7 @@ async function handleDialogFlowAction(
     case "input.welcome":
       /* sendTextMessage(sender, "este es un mensaje enviado desde el código"); */
 
-      sendQuickReply(sender, "Que funcionalidad deseas realizar?", [
+      await sendQuickReply(sender, "Que funcionalidad deseas realizar?", [
         {
           "content_type": "text",
           "title": "Informes Capacitación",
@@ -298,12 +304,17 @@ async function handleDialogFlowAction(
       /* handleMessages(messages, sender); */
       break;
     case "informes":
-      sendGenericMessage(sender, [
+      await sendGenericMessage(sender, [
         {
           "buttons": [
             {
-              "title": "Generar",
+              "title": "Mostrar Informacion",
               "payload": "CURSOS PROXIMOS A VENCERSE",
+              "type": "postback"
+            },
+            {
+              "title": "Generar Informe...",
+              "payload": "CURSO_PROXIMOS_A_VENCERSE_REPORTE",
               "type": "postback"
             }
           ],
@@ -318,7 +329,12 @@ async function handleDialogFlowAction(
             {
               "payload": "MATRIZ_DE_CAPACITACION",
               "type": "postback",
-              "title": "Generar"
+              "title": "Mostrar Informacion"
+            },
+            {
+              "title": "Generar Informe...",
+              "payload": "MATRIZ_DE_CAPACITACION_REPORTE",
+              "type": "postback"
             }
           ],
           "image_url": "https://image.freepik.com/vector-gratis/concepto-examen-linea-pruebas-linea-formulario-cuestionario-educacion-linea-encuesta-cuestionario-internet-ilustracion-vectorial-isometrica_159446-22.jpg"
@@ -329,8 +345,13 @@ async function handleDialogFlowAction(
           "title": "CERTIFICACION DE CONDUCCION",
           "buttons": [
             {
-              "title": "Generar",
-              "payload": "CONDUCTO_HABILITADO",
+              "title": "Mostrar Informacion",
+              "payload": "CONDUCTORES_HABILITADOS",
+              "type": "postback"
+            },
+            {
+              "title": "Generar Informe...",
+              "payload": "CONDUCTORES_HABILITADOS_REPORTE",
               "type": "postback"
             }
           ]
@@ -339,7 +360,12 @@ async function handleDialogFlowAction(
           "buttons": [
             {
               "payload": "WELL CONTROL SCHOOL",
-              "title": "Generar",
+              "title": "Mostrar Información",
+              "type": "postback"
+            },
+            {
+              "title": "Generar Informe...",
+              "payload": "WELL_CONTROL_SCHOOL_REPORTE",
               "type": "postback"
             }
           ],
@@ -353,7 +379,12 @@ async function handleDialogFlowAction(
             {
               "type": "postback",
               "payload": "INFORMACION DEL EVENTO",
-              "title": "Generar"
+              "title": "Mostrar Información"
+            },
+            {
+              "title": "Generar Informe...",
+              "payload": "INFORMACION_DEL_EVENTO_REPORTE",
+              "type": "postback"
             }
           ],
           "title": "INFORMACION DE UN EVENTO",
@@ -364,8 +395,13 @@ async function handleDialogFlowAction(
           "buttons": [
             {
               "type": "postback",
-              "title": "Generar",
+              "title": "Mostrar Información",
               "payload": "HISTORICO DE CAPACITACION"
+            },
+            {
+              "title": "Generar Informe...",
+              "payload": "HISTORICO_DE_CAPACITACION_REPORTE",
+              "type": "postback"
             }
           ],
           "title": "HISTORICO DE CAPACITACION",
@@ -377,7 +413,12 @@ async function handleDialogFlowAction(
           "buttons": [
             {
               "payload": "CRONOGRAMA DE CAPACITACION",
-              "title": "Generar",
+              "title": "Mostrar Información",
+              "type": "postback"
+            },
+            {
+              "title": "Generar Informe...",
+              "payload": "CRONOGRAMA_DE_CAPACITACION_REPORTE",
               "type": "postback"
             }
           ],
@@ -385,30 +426,68 @@ async function handleDialogFlowAction(
         }
       ]);
       break;
-    case "CumplimientoMatriz":
-      sendTextMessage(sender, `Estas con el intent: ${action}`);
+    case "CumplimientoMatrizParametros":
+      console.log(parameters, ' PARAMETROS');
+      //solicitar el parametro gestion
+      let gestion = parameters.fields.gestion.numberValue;
+      console.log('GESTION!!!:', gestion);
+      //obtener los registros
+      let ruta = queryAPI('seguimiento', [gestion.toString(), '8581']);
+      console.log(ruta);
+      let data = await requestURL(ruta);
+      let resultComplete = '';
+      console.log(data.cursos);
+      if (data.success && data.cursos.length !== 0) {
+        resultComplete = `*MATRIZ DE SEGUIMIENTO INDIVIDUAL - GESTION ${data.gestion}*\n
+        *Legajo-Nombre Completo*: ${data.empleados} \n
+        *SEGUN TU FUNCIÓN,DEBERIAS REALIZAR LOS SIGUIENTES CURSOS:*\n`;
+        data.cursos.forEach(element => {
+          resultComplete += `
+            *${element.curso}:* _${eliminarItalicas(element.value)}_\n
+            `
+        });
+
+      } else {
+        resultComplete = '*NO EXISTE INFORMACION - MATRIZ DE SEGUIMIENTO.*';
+      }
+      console.log(resultComplete);
+      await sendTextMessage(sender, resultComplete);
       break;
+    case "CumplimientoMatriz":
+      await sendTextMessage(sender, 'Escribe de la gestión por favor (2000,2001,etc.): ');
+      break;
+
+    //Mostrar informacion del reporte.
     case "wellControlHabilitados":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
+    //Mostrar informacion del reporte.
     case "cursosProximosAVencerse":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
+    //Mostrar informacion del reporte.
     case "wellControlHabilitados":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
+    //Mostrar informacion del reporte.
     case "conductoresHabilitadosDeshabilitados":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
+    //Mostrar informacion del reporte.
     case "cronogramaCapacitacion":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
+    //Mostrar informacion del reporte.
     case "historicoCapacitacion":
+      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      break;
+    //Mostrar informacion del reporte.
+    case "informacionEvento":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
     default:
       //unhandled action, just send back the text
-      handleMessages(messages, sender);
+      await handleMessages(messages, sender);
   }
 }
 

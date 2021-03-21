@@ -86,3 +86,16 @@
           "subtitle": "Eventos(cursos), realizados o programados."
         }
       ]);
+
+      // ENVIO DE ARCHIVO FIREBASE MATRIZ DE CAPACITACION
+      {
+  "facebook": {
+    "attachment": {
+      "payload": {
+        "is_reusable": false,
+        "url": "https://firebasestorage.googleapis.com/v0/b/entrevistador-b1a7b.appspot.com/o/SeguimientoCumplimientoMatrizporFuncion.pdf?alt=media&token=bbe4c185-54d3-4b08-bc46-f6bca6b351ed"
+      },
+      "type": "file"
+    }
+  }
+}

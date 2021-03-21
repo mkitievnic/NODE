@@ -1,6 +1,6 @@
 const { resolve } = require("path");
 const http = require('http');
-const jwt = require('jsonwebtoken');
+//const jwt = require('jsonwebtoken');
 const { response, request } = require("express");
 
 
@@ -143,6 +143,19 @@ const verifyToken = (req = request, res = response, next) => {
     console.log('NO existe token');
   }
 }
+//Funcion para formatear texto.
+const eliminarItalicas = (word = '') => {
+  if (word !== '') {
+    word = word.replace('<i>', '');
+    word = word.replace('<br>', '');
+    word = word.replace('</i>', '');
+    word = word.replace("<span style='color: red'>", '');
+    word = word.replace("</span>", '');
+    return word;
+  }
+  return;
+}
+
 module.exports = {
   responseBasic,
   requestURL,
@@ -150,5 +163,6 @@ module.exports = {
   existeIntencion,
   existenParametros,
   generarJWT,
-  verifyToken
+  verifyToken,
+  eliminarItalicas
 }
