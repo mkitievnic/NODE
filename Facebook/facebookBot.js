@@ -302,11 +302,6 @@ async function handleDialogFlowAction(
               "title": "Mostrar Informacion",
               "payload": "CURSOS PROXIMOS A VENCERSE",
               "type": "postback"
-            },
-            {
-              "title": "Generar Informe...",
-              "payload": "CURSO_PROXIMOS_A_VENCERSE_REPORTE",
-              "type": "postback"
             }
           ],
           "title": "CURSOS PROXIMOS A VENCERSE",
@@ -321,11 +316,6 @@ async function handleDialogFlowAction(
               "payload": "MATRIZ_DE_CAPACITACION",
               "type": "postback",
               "title": "Mostrar Informacion"
-            },
-            {
-              "title": "Generar Informe...",
-              "payload": "MATRIZ_DE_CAPACITACION_REPORTE",
-              "type": "postback"
             }
           ],
           "image_url": "https://image.freepik.com/vector-gratis/concepto-examen-linea-pruebas-linea-formulario-cuestionario-educacion-linea-encuesta-cuestionario-internet-ilustracion-vectorial-isometrica_159446-22.jpg"
@@ -339,11 +329,6 @@ async function handleDialogFlowAction(
               "title": "Mostrar Informacion",
               "payload": "CONDUCTORES_HABILITADOS",
               "type": "postback"
-            },
-            {
-              "title": "Generar Informe...",
-              "payload": "CONDUCTORES_HABILITADOS_REPORTE",
-              "type": "postback"
             }
           ]
         },
@@ -352,11 +337,6 @@ async function handleDialogFlowAction(
             {
               "payload": "WELL CONTROL SCHOOL",
               "title": "Mostrar Información",
-              "type": "postback"
-            },
-            {
-              "title": "Generar Informe...",
-              "payload": "WELL_CONTROL_SCHOOL_REPORTE",
               "type": "postback"
             }
           ],
@@ -371,11 +351,6 @@ async function handleDialogFlowAction(
               "type": "postback",
               "payload": "INFORMACION DEL EVENTO",
               "title": "Mostrar Información"
-            },
-            {
-              "title": "Generar Informe...",
-              "payload": "INFORMACION_DEL_EVENTO_REPORTE",
-              "type": "postback"
             }
           ],
           "title": "INFORMACION DE UN EVENTO",
@@ -388,11 +363,6 @@ async function handleDialogFlowAction(
               "type": "postback",
               "title": "Mostrar Información",
               "payload": "HISTORICO DE CAPACITACION"
-            },
-            {
-              "title": "Generar Informe...",
-              "payload": "HISTORICO_DE_CAPACITACION_REPORTE",
-              "type": "postback"
             }
           ],
           "title": "HISTORICO DE CAPACITACION",
@@ -405,11 +375,6 @@ async function handleDialogFlowAction(
             {
               "payload": "CRONOGRAMA DE CAPACITACION",
               "title": "Mostrar Información",
-              "type": "postback"
-            },
-            {
-              "title": "Generar Informe...",
-              "payload": "CRONOGRAMA_DE_CAPACITACION_REPORTE",
               "type": "postback"
             }
           ],
