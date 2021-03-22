@@ -10,7 +10,8 @@ const ChatbotUserSchema = new Schema(
       unique: true,
     },
     profilePic: String,
-    time: String
+    time: Date,
+    legajo: String
   },
   { timestamps: true }
 );

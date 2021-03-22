@@ -140,7 +140,7 @@ async function saveUserData(facebookId) {
     lastName: userData.last_name,
     facebookId,
     profilePic: userData.profile_pic,
-    time: moment().format();
+    time: moment().format()
   });
   chatbotUser.save((err, res) => {
     if (err) return console.log(err);
@@ -222,6 +222,9 @@ async function handleDialogFlowAction(
         let apellidoPaterno = usuario.empleado.persona.apellido_paterno;
         let apellidoMaterno = usuario.empleado.persona.apellido_materno;
         let funcion = usuario.empleado.persona.funcion.nombre;
+        let legajo = usuario.empleado.persona.legajo;
+        let userChange = await ChatbotUser.findOneAndUpdate(sender, { legajo });
+        console.log('USUARIO CAMBIADO:', userChange);
         let message = `USUARIO REGISTRADO - SAN ANTONIO \n
           Nombre Completo: ${nombreUsuario} ${apellidoMaterno} ${apellidoPaterno}\n
           Funcion: ${funcion}
@@ -419,20 +422,21 @@ async function handleDialogFlowAction(
       //solicitar el parametro gestion
       let gestion = parameters.fields.gestion.numberValue;
       console.log('GESTION!!!:', gestion);
+      //obteniendo legajo
+      console.log(sender);
+      let user = await ChatbotUser.findOne({ facebookId: sender }).lean();
+      console.log(user);
+      console.log('LEGA:', user.legajo);
       //obtener los registros
-      let ruta = queryAPI('seguimiento', [gestion.toString(), '8581']);
+      let ruta = queryAPI('seguimiento', [gestion.toString(), user.legajo]);
       console.log(ruta);
       let data = await requestURL(ruta);
       let resultComplete = '';
       console.log(data.cursos);
       if (data.success && data.cursos.length !== 0) {
-        resultComplete = `*MATRIZ DE SEGUIMIENTO INDIVIDUAL - GESTION ${data.gestion}*\n
-        *Legajo-Nombre Completo*: ${data.empleados} \n
-        *SEGUN TU FUNCIÓN,DEBERIAS REALIZAR LOS SIGUIENTES CURSOS:*\n`;
+        resultComplete = `MATRIZ DE SEGUIMIENTO INDIVIDUAL - GESTION ${data.gestion}\nLegajo-Nombre Completo: ${data.empleados}\nMATRIZ INDIVIDUAL:\n`;
         data.cursos.forEach(element => {
-          resultComplete += `
-            *${element.curso}:* _${eliminarItalicas(element.value)}_\n
-            `
+          resultComplete += `${element.curso}:${eliminarItalicas(element.value)}\n`;
         });
 
       } else {
