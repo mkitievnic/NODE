@@ -226,7 +226,7 @@ async function handleDialogFlowAction(
         let userChange = await ChatbotUser.findOneAndUpdate(sender, { legajo });
         console.log('USUARIO CAMBIADO:', userChange);
         let message = `USUARIO REGISTRADO - SAN ANTONIO \n
-          Nombre Completo: ${nombreUsuario} ${apellidoMaterno} ${apellidoPaterno}\n
+          Nombre Completo: ${nombreUsuario} ${apellidoPaterno} ${apellidoMaterno}\n
           Funcion: ${funcion}
           `;
         await sendTextMessage(sender, message);
