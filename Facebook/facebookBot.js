@@ -4,6 +4,7 @@ const router = express.Router();
 const request = require("request");
 const uuid = require("uuid");
 const axios = require("axios");
+const moment = require('moment');
 //files
 const config = require("../config");
 const dialogflow = require("../dialogflow");
@@ -139,6 +140,7 @@ async function saveUserData(facebookId) {
     lastName: userData.last_name,
     facebookId,
     profilePic: userData.profile_pic,
+    time: moment().format();
   });
   chatbotUser.save((err, res) => {
     if (err) return console.log(err);
@@ -181,126 +183,112 @@ async function handleDialogFlowAction(
   parameters
 ) {
   switch (action) {
-    /*     case "Helados.info.action":
-          let icecreamName = parameters.fields.icecreamName.stringValue;
-          let icecreamInfo = await Product.findOne({ name: icecreamName });
-          sendGenericMessage(sender, [
-            {
-              title: icecreamInfo.name + " $" + icecreamInfo.price,
-              image_url: icecreamInfo.img,
-              subtitle: icecreamInfo.description,
-              buttons: [
-                {
-                  type: "postback",
-                  title: "Hacer compra",
-                  payload: "hacer_compra",
-                },
-                {
-                  type: "postback",
-                  title: "Ver más helados",
-                  payload: "ver_mas_helados",
-                },
-              ],
-            },
-          ]);
-          break;
-        case "Code.DemasElementos.action":
-          await sendTextMessage(sender, "Estoy mandando una imagen y un boton");
-          await sendImageMessage(
-            sender,
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQeOnyjNIucV-XNe6DcdOuhKahh9jdNY4RkuQ&usqp=CAU"
-          );
-          await sendButtonMessage(sender, "Ejemplo de boton", [
-            {
-              type: "web_url",
-              url: "https://www.messenger.com",
-              title: "Visit Messenger",
-            },
-          ]);
-          break;
-        case "Code.menuCarrusel.action":
-          let helados = [
-            {
-              id: 1,
-              nombre: "Helado de fresa",
-              img:
-                "https://cocina-casera.com/wp-content/uploads/2018/05/helado-de-fresa-casero.jpg",
-              descripcion: "Los helados de fresa son muy ricos",
-              precio: 7,
-            },
-            {
-              id: 2,
-              nombre: "Helado de piña",
-              img:
-                "https://okdiario.com/img/2019/07/07/receta-de-helado-casero-de-pina-1-655x368.jpg",
-              descripcion: "Los helados de piña son muy ricos",
-              precio: 5,
-            },
-            {
-              id: 3,
-              nombre: "Helado de chocolate",
-              img:
-                "https://placeralplato.com/files/2015/08/helado-de-chocolate.jpg",
-              descripcion: "Los helados de chocolate son muy ricos",
-              precio: 10,
-            },
-          ];
-          let tarjetas = [];
-          helados.forEach((helado) => {
-            tarjetas.push({
-              title: helado.nombre + " $" + helado.precio,
-              image_url: helado.img,
-              subtitle: helado.descripcion,
-              buttons: [
-                {
-                  type: "postback",
-                  title: "Hacer compra",
-                  payload: "hacer_compra",
-                },
-                {
-                  type: "postback",
-                  title: "Ver más helados",
-                  payload: "ver_mas_helados",
-                },
-              ],
-            });
-          });
-          sendGenericMessage(sender, tarjetas);
-    
-          break;
-        case "Codigo.quickReply.action":
-          let replies = [];
-          for (let i = 1; i <= 5; i++) {
-            replies.push({
-              image_url:
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Check_green_icon.svg/1200px-Check_green_icon.svg.png",
-              title: i,
-              payload: "si_acepto",
-              content_type: "text",
-            });
-          }
-          sendQuickReply(sender, "Ejemplo de quick reply", replies);
-          break; */
-    case "prueba":
-      sendTextMessage(sender, "este es un mensaje enviado desde el código");
-      handleMessages(messages, sender);
-      break;
     case "input.welcome":
-      /* sendTextMessage(sender, "este es un mensaje enviado desde el código"); */
-
-      await sendQuickReply(sender, "Que funcionalidad deseas realizar?", [
+      await sendTextMessage(sender, "BIENVENIDOS A SAN ANTONIO");
+      await sendGenericMessage(sender, [
         {
-          "content_type": "text",
-          "title": "Informes Capacitación",
-          "payload": "INFORMES_PAYLOAD",
-          "image_url": "https://img.icons8.com/nolan/72/medical-history.png",
-        }, {
-          "content_type": "text",
-          "title": "Preguntas Frecuentes (F.A.Q.)",
-          "payload": "FAQ_PAYLOAD",
-          "image_url": "https://img.icons8.com/nolan/2x/questions.png",
+          "buttons": [
+            {
+              "title": "Autentificarse",
+              "payload": "AUTENTIFICARSE_PAYLOAD",
+              "type": "postback"
+            }
+          ],
+          "title": "AUTENTIFICACION DEL USUARIO",
+          "image_url": "https://news.sophos.com/wp-content/uploads/2016/06/autentificacion.gif",
+          "subtitle": "Debe estar dado de alta como usuario."
         }
       ]);
+
+      /* await sendTextMessage(sender, "Escribe tu email y contraseña."); */
+      break;
+    case "autentificacion":
+      await sendTextMessage(sender, '{first_name} {last_name}, coloca tu correo electrónico y contraseña por favor.');
+      let infomationUser = await getUserData(sender);
+      await sendImageMessage(sender, infomationUser.profile_pic);
+      break;
+    case "autentificacionParametros":
+      console.log(parameters);
+      let email = parameters.fields.email.stringValue;
+      let pasword = parameters.fields.pasword.stringValue;
+      console.log(email, ' ', pasword);
+      //obtener los registros
+      let path = queryAPI('login', [email, pasword]);
+      console.log(path);
+      let usuario = await requestURL(path);
+      console.log(usuario);
+      if (usuario.success && usuario.empleado.alta) {
+        let nombreUsuario = usuario.empleado.persona.nombre;
+        let apellidoPaterno = usuario.empleado.persona.apellido_paterno;
+        let apellidoMaterno = usuario.empleado.persona.apellido_materno;
+        let funcion = usuario.empleado.persona.funcion.nombre;
+        let message = `USUARIO REGISTRADO - SAN ANTONIO \n
+          Nombre Completo: ${nombreUsuario} ${apellidoMaterno} ${apellidoPaterno}\n
+          Funcion: ${funcion}
+          `;
+        await sendTextMessage(sender, message);
+        await sendGenericMessage(sender, [
+          {
+            "buttons": [
+              {
+                "title": "Ver Informes",
+                "payload": "INFORMES_PAYLOAD_291277",
+                "type": "postback"
+              }
+            ],
+            "title": "INFORMES DE CAPACITACION",
+            "image_url": "https://www.egosbi.com/wp-content/uploads/2020/04/facebook_insights_reporting_gds-1080x675-1.png",
+            "subtitle": "Informes de capacitación."
+          },
+          {
+            "buttons": [
+              {
+                "title": "Ver Preguntas",
+                "payload": "FAQ_PAYLOAD",
+                "type": "postback"
+              }
+            ],
+            "title": "PREGUNTAS FRECUENTES - F.A.Q.",
+            "image_url": "https://image.freepik.com/vector-gratis/grupo-personas-iconos-signo-interrogacion_53876-64627.jpg",
+            "subtitle": "F.A.Q. de procesamiento capacitación."
+          }
+        ]);
+
+      } else {
+        await sendTextMessage(sender, '{first_name} {last_name}, NO ESTAS HABILITADO O DADO DE ALTA.');
+        await sendImageMessage(sender, 'https://kinsta.com/es/wp-content/uploads/sites/8/2020/06/error-401.jpg');
+
+      }
+      break;
+    case "funcionalidades":
+      /* sendTextMessage(sender, "este es un mensaje enviado desde el código"); */
+      await sendGenericMessage(sender, [
+        {
+          "buttons": [
+            {
+              "title": "Ver Informes",
+              "payload": "INFORMES_PAYLOAD",
+              "type": "postback"
+            }
+          ],
+          "title": "INFORMES DE CAPACITACION",
+          "image_url": "https://www.egosbi.com/wp-content/uploads/2020/04/facebook_insights_reporting_gds-1080x675-1.png",
+          "subtitle": "Informes de capacitación."
+        },
+        {
+          "buttons": [
+            {
+              "title": "Ver Preguntas",
+              "payload": "FAQ_PAYLOAD",
+              "type": "postback"
+            }
+          ],
+          "title": "PREGUNTAS FRECUENTES - F.A.Q.",
+          "image_url": "https://image.freepik.com/vector-gratis/grupo-personas-iconos-signo-interrogacion_53876-64627.jpg",
+          "subtitle": "F.A.Q. de procesamiento capacitación."
+        }
+      ]);
+
       /* handleMessages(messages, sender); */
       break;
     case "informes":
@@ -629,6 +617,8 @@ function handleDialogFlowResponse(sender, response) {
   let action = response.action;
   let contexts = response.outputContexts;
   let parameters = response.parameters;
+
+  console.log('CONTEXTO:', JSON.stringify(contexts));
 
   sendTypingOff(sender);
 
