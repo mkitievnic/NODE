@@ -395,30 +395,30 @@ async function handleDialogFlowAction(
     case "parametroCursoProximoAVencerse":
       console.log(parameters, ' PARAMETROS');
       //solicitar el parametro gestion
-      let gestion = parameters.fields.gestion.numberValue;
-      console.log('GESTION!!!:', gestion);
+      let gestProxVenc = parameters.fields.gestion.numberValue;
+      console.log('GESTION!!!:', gestProxVenc);
       //obteniendo legajo
       console.log(sender);
-      let user = await ChatbotUser.findOne({ facebookId: sender }).lean();
-      console.log(user);
-      console.log('LEGA:', user.legajo);
+      let userProxVenc = await ChatbotUser.findOne({ facebookId: sender }).lean();
+      console.log(userProxVenc);
+      console.log('LEGA:', userProxVenc.legajo);
       //obtener los registros
-      let ruta = queryAPI('proximo-vencerse', [gestion.toString(), user.legajo]);
-      console.log(ruta);
-      let data = await requestURL(ruta);
-      let resultComplete = '';
-      console.log(data.cursos);
-      if (data.success && data.cursos.length !== 0) {
-        resultComplete = `CURSOS PROXIMOS A VENCERSE INDIVIDUAL - GESTION ${data.gestion}\nLegajo-Nombre Completo: ${data.empleado}\nMATRIZ INDIVIDUAL:\n`;
-        data.cursos.forEach(element => {
-          resultComplete += `${element.curso}:${eliminarItalicas(element.value)}\n`;
+      let rutaProxVenc = queryAPI('proximo-vencerse', [gestProxVenc.toString(), userProxVenc.legajo]);
+      console.log(rutaProxVenc);
+      let dataProxVenc = await requestURL(rutaProxVenc);
+      let resultCompleteProxVenc = '';
+      console.log(dataProxVenc.cursos);
+      if (dataProxVenc.success && dataProxVenc.cursos.length !== 0) {
+        resultCompleteProxVenc = `CURSOS PROXIMOS A VENCERSE INDIVIDUAL - GESTION ${dataProxVenc.gestion}\nLegajo-Nombre Completo: ${dataProxVenc.empleado}\nMATRIZ INDIVIDUAL:\n`;
+        dataProxVenc.cursos.forEach(element => {
+          resultCompleteProxVenc += `${element.curso}:${eliminarItalicas(element.value)}\n`;
         });
 
       } else {
-        resultComplete = 'NO EXISTE INFORMACION - CURSOS PROXIMOS A VENCERSE';
+        resultCompleteProxVenc = 'NO EXISTE INFORMACION - CURSOS PROXIMOS A VENCERSE';
       }
-      console.log(resultComplete);
-      await sendTextMessage(sender, resultComplete);
+      console.log(resultCompleteProxVenc);
+      await sendTextMessage(sender, resultCompleteProxVenc);
       break;
     //Muestra reporte well control
     case "wellControlHabilitados":
