@@ -183,6 +183,7 @@ async function handleDialogFlowAction(
   parameters
 ) {
   switch (action) {
+    //Inicio de conversacion con el bot y indica que usuario de facebook es
     case "input.welcome":
       await sendTextMessage(sender, "BIENVENIDOS A SAN ANTONIO");
       await sendGenericMessage(sender, [
@@ -202,11 +203,13 @@ async function handleDialogFlowAction(
 
       /* await sendTextMessage(sender, "Escribe tu email y contraseña."); */
       break;
+    //Me muestra tarjeta para autentificar usuario Management Trainning System
     case "autentificacion":
       await sendTextMessage(sender, '{first_name} {last_name}, coloca tu correo electrónico y contraseña por favor.');
       let infomationUser = await getUserData(sender);
       await sendImageMessage(sender, infomationUser.profile_pic);
       break;
+    //Solicita los parametros para autentificarse como usuario M.T.S.
     case "autentificacionParametros":
       console.log(parameters);
       let email = parameters.fields.email.stringValue;
@@ -226,8 +229,8 @@ async function handleDialogFlowAction(
         let userChange = await ChatbotUser.findOneAndUpdate(sender, { legajo });
         console.log('USUARIO CAMBIADO:', userChange);
         let message = `USUARIO REGISTRADO - SAN ANTONIO \n
-          Nombre Completo: ${nombreUsuario} ${apellidoPaterno} ${apellidoMaterno}\n
-          Funcion: ${funcion}
+          NOMBRE COMPLETO: ${nombreUsuario} ${apellidoPaterno} ${apellidoMaterno}\n
+          FUNCION: ${funcion}
           `;
         await sendTextMessage(sender, message);
         await sendGenericMessage(sender, [
@@ -258,42 +261,12 @@ async function handleDialogFlowAction(
         ]);
 
       } else {
-        await sendTextMessage(sender, '{first_name} {last_name}, NO ESTAS HABILITADO O DADO DE ALTA.');
+        await sendTextMessage(sender, '{first_name} {last_name}, USUARIO NO REGISTRADO O DADO DE ALTA.');
         await sendImageMessage(sender, 'https://kinsta.com/es/wp-content/uploads/sites/8/2020/06/error-401.jpg');
 
       }
       break;
-    case "funcionalidades":
-      /* sendTextMessage(sender, "este es un mensaje enviado desde el código"); */
-      await sendGenericMessage(sender, [
-        {
-          "buttons": [
-            {
-              "title": "Ver Informes",
-              "payload": "INFORMES_PAYLOAD",
-              "type": "postback"
-            }
-          ],
-          "title": "INFORMES DE CAPACITACION",
-          "image_url": "https://www.egosbi.com/wp-content/uploads/2020/04/facebook_insights_reporting_gds-1080x675-1.png",
-          "subtitle": "Informes de capacitación."
-        },
-        {
-          "buttons": [
-            {
-              "title": "Ver Preguntas",
-              "payload": "FAQ_PAYLOAD",
-              "type": "postback"
-            }
-          ],
-          "title": "PREGUNTAS FRECUENTES - F.A.Q.",
-          "image_url": "https://image.freepik.com/vector-gratis/grupo-personas-iconos-signo-interrogacion_53876-64627.jpg",
-          "subtitle": "F.A.Q. de procesamiento capacitación."
-        }
-      ]);
-
-      /* handleMessages(messages, sender); */
-      break;
+    //Muestra todas las tarjetas de cada uno de los informes
     case "informes":
       await sendGenericMessage(sender, [
         {
@@ -382,6 +355,7 @@ async function handleDialogFlowAction(
         }
       ]);
       break;
+    //Solicita el parametro de gestion para reporte de cumplimiento de matriz
     case "CumplimientoMatrizParametros":
       console.log(parameters, ' PARAMETROS');
       //solicitar el parametro gestion
@@ -410,35 +384,59 @@ async function handleDialogFlowAction(
       console.log(resultComplete);
       await sendTextMessage(sender, resultComplete);
       break;
+    //Inicia interaccion con el reporte de cumplimiento de matriz
     case "CumplimientoMatriz":
       await sendTextMessage(sender, 'Escribe de la gestión por favor (2000,2001,etc.): ');
       break;
-
-    //Mostrar informacion del reporte.
-    case "wellControlHabilitados":
-      sendTextMessage(sender, `Estas con el intent: ${action}`);
-      break;
-    //Mostrar informacion del reporte.
+    //Inicia interaccion con reporte proximo a vencerse
     case "cursosProximosAVencerse":
-      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      await sendTextMessage(sender, 'Escribe de la gestión por favor (2000,2001,etc.): ');
       break;
-    //Mostrar informacion del reporte.
+    case "parametroCursoProximoAVencerse":
+      console.log(parameters, ' PARAMETROS');
+      //solicitar el parametro gestion
+      let gestion = parameters.fields.gestion.numberValue;
+      console.log('GESTION!!!:', gestion);
+      //obteniendo legajo
+      console.log(sender);
+      let user = await ChatbotUser.findOne({ facebookId: sender }).lean();
+      console.log(user);
+      console.log('LEGA:', user.legajo);
+      //obtener los registros
+      let ruta = queryAPI('proximo-vencerse', [gestion.toString(), user.legajo]);
+      console.log(ruta);
+      let data = await requestURL(ruta);
+      let resultComplete = '';
+      console.log(data.cursos);
+      if (data.success && data.cursos.length !== 0) {
+        resultComplete = `CURSOS PROXIMOS A VENCERSE INDIVIDUAL - GESTION ${data.gestion}\nLegajo-Nombre Completo: ${data.empleado}\nMATRIZ INDIVIDUAL:\n`;
+        data.cursos.forEach(element => {
+          resultComplete += `${element.curso}:${eliminarItalicas(element.value)}\n`;
+        });
+
+      } else {
+        resultComplete = 'NO EXISTE INFORMACION - CURSOS PROXIMOS A VENCERSE';
+      }
+      console.log(resultComplete);
+      await sendTextMessage(sender, resultComplete);
+      break;
+    //Muestra reporte well control
     case "wellControlHabilitados":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
-    //Mostrar informacion del reporte.
+    //Muestra con reporte conductores habilitados
     case "conductoresHabilitadosDeshabilitados":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
-    //Mostrar informacion del reporte.
+    //Mostrar informacion del reporte cronograma
     case "cronogramaCapacitacion":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
-    //Mostrar informacion del reporte.
+    //Muestra informe de historico de capacitacion
     case "historicoCapacitacion":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
-    //Mostrar informacion del reporte.
+    //Muestra informe del evento consultado
     case "informacionEvento":
       sendTextMessage(sender, `Estas con el intent: ${action}`);
       break;
