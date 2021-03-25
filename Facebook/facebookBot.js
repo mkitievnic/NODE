@@ -422,23 +422,121 @@ async function handleDialogFlowAction(
       break;
     //Muestra reporte well control
     case "wellControlHabilitados":
-      sendTextMessage(sender, `Estas con el intent: ${action}`);
+
       break;
     //Muestra con reporte conductores habilitados
     case "conductoresHabilitadosDeshabilitados":
-      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      //obteniendo legajo
+      console.log(sender);
+      let userCondHabVenc = await ChatbotUser.findOne({ facebookId: sender }).lean();
+      console.log(userCondHabVenc);
+      console.log('LEGA:', userCondHabVenc.legajo);
+      //obtener los registros
+      let rutaCondHabVenc = queryAPI('conductores-habilitados', [userCondHabVenc.legajo]);
+      console.log(rutaCondHabVenc);
+      let dataCondHabVenc = await requestURL(rutaCondHabVenc);
+      let resultCompleteCondHabVenc = '';
+      console.log(dataCondHabVenc.empleados);
+      if (dataCondHabVenc.success && dataCondHabVenc.empleados.length !== 0) {
+        resultCompleteCondHabVenc = `CONDUCTOR HABILITADO DESHABILITADO INDIVIDUAL\n`;
+        dataCondHabVenc.empleados.forEach(element => {
+          resultCompleteCondHabVenc += `legajo: ${element.legajo}\n nombre:${element.nombre}\n
+          Funcion:${element.funcion}\n Manejo Defensivo:${element['Manejo defensivo']}\n
+          Montacarga: ${element.Montacarga}\n
+          Grua:${element.grua}`;
+        });
+
+      } else {
+        resultCompleteCondHabVenc = 'NO EXISTE INFORMACION - CONDUCTORES HABILITADOS Y DESHABILITADOS';
+      }
+      console.log(resultCompleteCondHabVenc);
+      await sendTextMessage(sender, resultCompleteCondHabVenc);
       break;
     //Mostrar informacion del reporte cronograma
     case "cronogramaCapacitacion":
-      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      await sendTextMessage(sender, 'Escribe de la gestión por favor (2000,2001,etc.): ');
+      break;
+    case "parametroCronograma":
+      console.log(parameters, ' PARAMETROS');
+      //solicitar el parametro gestion
+      let gestCron = parameters.fields.gestion.numberValue;
+      console.log('GESTION!!!:', gestCron);
+      console.log(sender);
+      //obtener los registros
+      let rutaCron = queryAPI('programa-capacitacion', [gestCron.toString()]);
+      console.log(rutaCron);
+      let dataCron = await requestURL(rutaCron);
+      let resultCompleteCron = '';
+      console.log(dataCron.eventos);
+      if (dataCron.success && dataCron.eventos.length !== 0) {
+        resultCompleteCron = `CRONOGRAMA DE EVENTOS - GESTION ${dataCron.gestion}\n`;
+        dataCron.eventos.forEach(element => {
+          resultCompleteCron += `\nINICIA:${element.inicia}\nTERMINA:${element.termina}\nCURSO:${element.curso}\nINSTRUCTOR:${element.instructor}\nESTADO:${element["estado "]}\n`;
+        });
+
+      } else {
+        resultCompleteCron = 'NO EXISTE INFORMACION - CRONOGRAMA';
+      }
+      console.log(resultCompleteCron);
+      await sendTextMessage(sender, resultCompleteCron);
       break;
     //Muestra informe de historico de capacitacion
     case "historicoCapacitacion":
-      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      console.log(sender);
+      let userHist = await ChatbotUser.findOne({ facebookId: sender }).lean();
+      console.log(userHist);
+      console.log('LEGA:', userHist.legajo);
+      //obtener los registros
+      let rutaHist = queryAPI('historico-capacitacion', [userHist.legajo]);
+      console.log(rutaHist);
+      let dataHist = await requestURL(rutaHist);
+      let resultCompleteHist = '';
+      console.log(dataHist);
+      if (dataHist.success && dataHist.participantes.length !== 0) {
+        resultCompleteHist = `HISTORICO DE CAPACITACION\n`;
+        dataHist.participantes.forEach(element => {
+          resultCompleteHist += `\nINICIO:${element.inicial}\nTERMINO:${element.final}\nCURSO:${element.curso}\nESTADO CURSO:${element.aprobado}\nINSTRUCTOR:${element.instructor}\n`;
+        });
+
+      } else {
+        resultCompleteHist = 'NO EXISTE DATOS DE SU HISTORICO';
+      }
+      console.log(resultCompleteHist);
+      await sendTextMessage(sender, resultCompleteHist);
       break;
     //Muestra informe del evento consultado
     case "informacionEvento":
-      sendTextMessage(sender, `Estas con el intent: ${action}`);
+      await sendTextMessage(sender, 'Escribe el numero de evento (1,2,3,etc.): ');
+      break;
+    case "parametroEvento":
+      console.log(parameters, ' PARAMETROS');
+      //solicitar el parametro gestion
+      let parEve = parameters.fields.evento.numberValue;
+      console.log('EVENTO!!!:', parEve);
+      console.log(sender);
+      //obtener los registros
+      let rutaParEve = queryAPI('get-evento', [parEve.toString()]);
+      console.log(rutaParEve);
+      let dataParEve = await requestURL(rutaParEve);
+      let resultCompleteParEve = '';
+      console.log(dataParEve);
+      if (dataParEve.success && dataParEve.evento.participantes.length !== 0) {
+        resultCompleteParEve += `INFORMACION DEL EVENTO - Nro. ${parEve}\n`;
+        resultCompleteParEve += `FECHA INI: ${dataParEve.evento.fecha_inicial} FECHA FIN: ${dataParEve.evento.fecha_final}\n`;
+        resultCompleteParEve += `HORA INI: ${dataParEve.evento.hora_inicial} HORA FIN: ${dataParEve.evento.hora_final}\n`;
+        resultCompleteParEve += `DIRECCION: ${dataParEve.evento.direccion}\n`;
+        resultCompleteParEve += `CURSO: ${dataParEve.evento.curso.nombre}\n`;
+        resultCompleteParEve += `COD. CURSO: ${dataParEve.evento.curso.codigo}\n`;
+        resultCompleteParEve += `CANTIDAD PARTICIPANTES: ${dataParEve.evento.participantes.length}\n`;
+        /* dataParEve.evento.participantes.forEach(element => {
+          resultCompleteParEve += `PARTICIPANTE:${element.empleado.nombre} ${element.empleado.apellido_paterno} ${element.empleado.apellido_materno}\n`;
+        }); */
+
+      } else {
+        resultCompleteParEve = 'NO EXISTE INFORMACION - CRONOGRAMA';
+      }
+      console.log(resultCompleteParEve);
+      await sendTextMessage(sender, resultCompleteParEve);
       break;
     default:
       //unhandled action, just send back the text

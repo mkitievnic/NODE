@@ -88,7 +88,7 @@ function queryAPI(ruta = '', params = []) {
       URL = `http://sanantoniotraining.herokuapp.com/api/${ruta}?legajo=${params[0]}`;
       break;
     case 'programa-capacitacion':
-      URL = `http://sanantoniotraining.herokuapp.com/api/${ruta}/${params[0]}?txtEstado=${params[1]}`;
+      URL = `http://sanantoniotraining.herokuapp.com/api/${ruta}/${params[0]}?txtEstado=%`;
       break;
     case 'login':
       URL = `http://sanantoniotraining.herokuapp.com/api/${ruta}/${params[0]}/${params[1]}`;
