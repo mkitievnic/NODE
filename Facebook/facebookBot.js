@@ -428,18 +428,16 @@ async function handleDialogFlowAction(
       console.log(userWell);
       console.log('LEGA:', userWell.legajo);
       //obtener los registros
-      let rutaWell = queryAPI('conductores-habilitados', [userWell.legajo]);
+      let rutaWell = queryAPI('personal-well-control', [userWell.legajo]);
       console.log(rutaWell);
       let dataWell = await requestURL(rutaWell);
       let resultCompleteWell = '';
-      console.log(dataWell.empleados);
-      if (dataWell.success && dataWell.empleados.length !== 0) {
+      console.log(dataWell.participantes);
+      if (dataWell.success && dataWell.participantes.length !== 0) {
         resultCompleteWell = `WELL CONTROL HABILITADO DESHABILITADO INDIVIDUAL\n`;
-        dataWell.empleados.forEach(element => {
-          resultCompleteWell += `legajo: ${element.legajo}\n nombre:${element.nombre}\n
-          Funcion:${element.funcion}\n Manejo Defensivo:${element['Manejo defensivo']}\n
-          Montacarga: ${element.Montacarga}\n
-          Grua:${element.grua}`;
+        dataWell.participantes.forEach(element => {
+          resultCompleteWell += `GESTION: ${element.gestion}\n NOTA:${element.final}\n
+          APROBADO:${element.final > 74}`;
         });
 
       } else {
