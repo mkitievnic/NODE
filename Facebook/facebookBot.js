@@ -422,7 +422,31 @@ async function handleDialogFlowAction(
       break;
     //Muestra reporte well control
     case "wellControlHabilitados":
+      //obteniendo legajo
+      console.log(sender);
+      let userWell = await ChatbotUser.findOne({ facebookId: sender }).lean();
+      console.log(userWell);
+      console.log('LEGA:', userWell.legajo);
+      //obtener los registros
+      let rutaWell = queryAPI('conductores-habilitados', [userWell.legajo]);
+      console.log(rutaWell);
+      let dataWell = await requestURL(rutaWell);
+      let resultCompleteWell = '';
+      console.log(dataWell.empleados);
+      if (dataWell.success && dataWell.empleados.length !== 0) {
+        resultCompleteWell = `WELL CONTROL HABILITADO DESHABILITADO INDIVIDUAL\n`;
+        dataWell.empleados.forEach(element => {
+          resultCompleteWell += `legajo: ${element.legajo}\n nombre:${element.nombre}\n
+          Funcion:${element.funcion}\n Manejo Defensivo:${element['Manejo defensivo']}\n
+          Montacarga: ${element.Montacarga}\n
+          Grua:${element.grua}`;
+        });
 
+      } else {
+        resultCompleteWell = 'NO EXISTE INFORMACION - WELL CONTROL HABILITADOS Y DESHABILITADOS';
+      }
+      console.log(resultCompleteWell);
+      await sendTextMessage(sender, resultCompleteWell);
       break;
     //Muestra con reporte conductores habilitados
     case "conductoresHabilitadosDeshabilitados":

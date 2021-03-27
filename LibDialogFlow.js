@@ -151,6 +151,9 @@ const eliminarItalicas = (word = '') => {
     word = word.replace('</i>', '');
     word = word.replace("<span style='color: red'>", '');
     word = word.replace("</span>", '');
+    word = word.replace("<span style='color: green'>", '');
+    word = word.replace("<sub>", '');
+    word = word.replace("</sub>", '');
     return word;
   }
   return;
